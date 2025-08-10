@@ -1,54 +1,28 @@
 package com.example.ediglobe_news
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-//import com.example.ediglobe_news.UI.RecyclerViewAdapter
 import com.example.ediglobe_news.adapter.RecyclerViewAdapter
-import com.example.ediglobe_news.networking.RetrofitClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import com.example.ediglobe_news.data.NewsResponse
-import kotlinx.coroutines.launch
+import com.example.ediglobe_news.networking.NewsWebAPI
+
 
 class MainActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContentView(R.layout.activity_main)
-    val apiKey = "bd96d9a1fc3d4dd9bc392e4580bff69c" // Replace with your NewsAPI.org key
-    var dataNewsStr = listOf<String>()
-      RetrofitClient.instance.getTopHeadlines("us", apiKey)
-        .enqueue(object : Callback<NewsResponse> {
-          override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
-            if (response.isSuccessful) {
-              val news = response.body()?.articles ?: emptyList()
-              dataNewsStr= news.map { article -> article.toString() }
-              val customAdapter = RecyclerViewAdapter(dataNewsStr)
-              val recyclerView: RecyclerView = findViewById<RecyclerView>(R.id.myRecyclerView)
-              recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
-              recyclerView.adapter = customAdapter
+    val apiKey = "bd96d9a1fc3d4dd9bc392e4580bff69c"
+    val newsFetcher = NewsWebAPI("us", apiKey)
+    val recyclerView: RecyclerView = findViewById(R.id.myRecyclerView)
+    recyclerView.layoutManager = LinearLayoutManager(this)
+    newsFetcher.newsReady.observe(this) { titles ->
+      var customAdapter = RecyclerViewAdapter(titles)
+      recyclerView.adapter = customAdapter
+    }
+    newsFetcher.getNews()
 
-            }
-          }
-
-          override fun onFailure(call: Call<NewsResponse>, t: Throwable) {
-            Log.e("News", "Error: ${t.message}")
-          }
-        })
-
-    val dataset =(1..199).map { it.toString() }
-
-
-//    val recyclerView: RecyclerView = findViewById<RecyclerView>(R.id.myRecyclerView)
-//    recyclerView.layoutManager = LinearLayoutManager(this)
-//    recyclerView.adapter = customAdapter
   }
 }
