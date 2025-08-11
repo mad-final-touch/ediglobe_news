@@ -18,11 +18,10 @@ class MainActivity : AppCompatActivity() {
     val newsFetcher = NewsWebAPI("us", apiKey)
     val recyclerView: RecyclerView = findViewById(R.id.myRecyclerView)
     recyclerView.layoutManager = LinearLayoutManager(this)
-    newsFetcher.newsReady.observe(this) { titles ->
-      var customAdapter = RecyclerViewAdapter(titles)
+    newsFetcher.newsReady.observe(this) { newsItems ->
+      var customAdapter = RecyclerViewAdapter(newsItems)
       recyclerView.adapter = customAdapter
     }
     newsFetcher.getNews()
-
   }
 }

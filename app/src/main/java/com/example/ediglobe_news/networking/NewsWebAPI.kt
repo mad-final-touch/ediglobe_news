@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ediglobe_news.R
 import com.example.ediglobe_news.adapter.RecyclerViewAdapter
 import com.example.ediglobe_news.data.NewsResponse
+import com.example.ediglobe_news.view_model.NewsItem
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,14 +15,14 @@ import retrofit2.Response
 class NewsWebAPI(country:String,apikey:String){
   val apiKey =apikey
   val country = country
-  var newsReady = MutableLiveData<List<String>>()
+  var newsReady = MutableLiveData<List<NewsItem>>()
   fun getNews(){
     RetrofitClient.instance.getTopHeadlines(country, apiKey)
       .enqueue(object : Callback<NewsResponse> {
         override fun onResponse(call: Call<NewsResponse>, response: Response<NewsResponse>) {
           if (response.isSuccessful) {
             val articles = response.body()?.articles ?: emptyList()
-            newsReady.postValue(articles.map { it.title ?: "" })
+            newsReady.postValue(articles.map { NewsItem(it.title ?: "" ,it.urlToImage)})
           }
         }
 
