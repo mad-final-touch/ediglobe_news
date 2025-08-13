@@ -1,47 +1,46 @@
 package com.example.ediglobe_news.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.ediglobe_news.R
 import com.example.ediglobe_news.data.ArticleItem
-import com.example.ediglobe_news.data.NewsItem
-
 
 class RecyclerViewAdapter(
   private val articlesList: List<ArticleItem>,
-//  private val onClickListener: View.OnClickListener
-  private val getArticleOnClicked: (articleItem: ArticleItem) -> Unit,
-) : RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder>() {
+  private val onItemClicked: (articleItem: ArticleItem) -> Unit,
+) : RecyclerView.Adapter<RecyclerViewAdapter.ArticleViewHolder>() {
 
-  class MyViewHolder(private val itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val textView: TextView = itemView.findViewById(R.id.itemText)
-    val iconView: ImageView = itemView.findViewById(R.id.itemIcon)
+  inner class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val titleTextView: TextView = itemView.findViewById(R.id.itemText)
+    val articleImageView: ImageView = itemView.findViewById(R.id.itemIcon)
 
+    fun bind(articleItem: ArticleItem) {
+        titleTextView.text = articleItem.title
+        Glide.with(articleImageView.context)
+            .load(articleItem.urlToImage)
+            .placeholder(R.drawable.ic_launcher_background)
+            .error(R.drawable.ic_launcher_foreground)
+            .into(articleImageView)
+
+        itemView.setOnClickListener {
+            onItemClicked(articleItem)
+        }
+    }
   }
 
-
-  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
     val view = LayoutInflater.from(parent.context)
       .inflate(R.layout.text_row_item, parent, false)
-//    view.findViewById<LinearLayout>(R.id.layout_item).orientation = LinearLayout.VERTICAL
-    return MyViewHolder(view)
+    return ArticleViewHolder(view)
   }
 
-  override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-    holder.textView.text = articlesList[position].title
-    holder.textView.setOnClickListener {
-      getArticleOnClicked(articlesList[position])
-    }
-    Glide.with(holder.iconView.context)
-      .load(articlesList[position].urlToImage)
-      .into(holder.iconView)
+  override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
+    holder.bind(articlesList[position])
   }
 
   override fun getItemCount() = articlesList.size

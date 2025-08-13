@@ -18,7 +18,17 @@
                     android:background="?attr/colorPrimary"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:title="My App"
-                    app:titleTextColor="@android:color/white" />
+                    app:titleTextColor="@android:color/white" >
+                        <ImageButton
+                            android:id="@+id/toggleButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:layout_margin="20dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_grid_view"
+                            android:contentDescription="Toggle Layout" />
+                </androidx.appcompat.widget.Toolbar>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/myRecyclerView"
