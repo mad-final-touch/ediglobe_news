@@ -1,5 +1,6 @@
 package com.example.ediglobe_news.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ class RecyclerViewAdapter(
 
         itemView.setOnClickListener {
             onItemClicked(articleItem)
+
         }
     }
   }
@@ -44,4 +46,5 @@ class RecyclerViewAdapter(
   }
 
   override fun getItemCount() = articlesList.size
+
 }
