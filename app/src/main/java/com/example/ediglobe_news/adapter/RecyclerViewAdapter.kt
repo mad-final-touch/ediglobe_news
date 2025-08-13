@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -13,6 +14,7 @@ import com.example.ediglobe_news.data.ArticleItem
 
 class RecyclerViewAdapter(
   private val articlesList: List<ArticleItem>,
+  private val isGridLayout:  () -> Boolean ,
   private val onItemClicked: (articleItem: ArticleItem) -> Unit,
 ) : RecyclerView.Adapter<RecyclerViewAdapter.ArticleViewHolder>() {
 
@@ -30,8 +32,15 @@ class RecyclerViewAdapter(
 
         itemView.setOnClickListener {
             onItemClicked(articleItem)
-
         }
+      val linearLayout= itemView.findViewById<View>(R.id.layout_item) as LinearLayout
+      if (isGridLayout()) {
+        linearLayout.orientation = LinearLayout.VERTICAL
+      }else{
+        linearLayout.orientation = LinearLayout.HORIZONTAL
+      }
+      Log.d("RecyclerViewAdapter", "isGridLayout: ${isGridLayout()}sdaf ${linearLayout.orientation}")
+
     }
   }
 

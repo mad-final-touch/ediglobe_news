@@ -30,48 +30,36 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         observeNewsUpdates()
 
-        newsFetcher.getNews()
         setupToggleLayout()
+        newsFetcher.getNews()
     }
 
     private fun setupRecyclerView() {
         recyclerView = findViewById(R.id.myRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.addOnLayoutChangeListener { v, left, top, right, bottom,
-                                                 oldLeft, oldTop, oldRight, oldBottom ->
-            if (left != oldLeft || top != oldTop || right != oldRight || bottom != oldBottom) {
-                // Layout has changed — do something here
-                Log.d("LayoutChange", "RecyclerView layout changed!")
-            }
-        }
     }
     private fun setupToggleLayout(){
         val toggleButton = findViewById<ImageButton>(R.id.toggleButton)
         toggleButton.setOnClickListener {
+            Log.d("MainActivityMyApp", "Toggle button clicked ${isGridLayout}")
             if (recyclerView.layoutManager is GridLayoutManager) {
-                Log.d("MainActivityMyApp", "Toggle button clicked")
-                toggleButton.setImageResource(R.drawable.ic_list_view)
+                toggleButton.setImageResource(R.drawable.ic_grid_view)
                 recyclerView.layoutManager = LinearLayoutManager(this@MainActivity)
                 isGridLayout = false
 
             }else{
-                toggleButton.setImageResource(R.drawable.ic_grid_view)
+                toggleButton.setImageResource(R.drawable.ic_list_view)
                 recyclerView.layoutManager = GridLayoutManager(this@MainActivity, 2)
                 isGridLayout = true
             }
+            Log.d("MainActivityMyApp", "${ recyclerView.adapter is RecyclerViewAdapter }")
             recyclerView.adapter?.notifyDataSetChanged()
         }
     }
-    private fun onLayoutChange() {
-        if (!isGridLayout) {
-            recyclerView.layoutManager = GridLayoutManager(this, 2)
-        } else {
-            recyclerView.layoutManager = LinearLayoutManager(this)
-        }
-    }
+
     private fun observeNewsUpdates() {
         newsFetcher.articleReady.observe(this) { articleItems ->
-            val customAdapter = RecyclerViewAdapter(articleItems) { articleItem ->
+            val customAdapter = RecyclerViewAdapter(articleItems, { isGridLayout }) { articleItem ->
                 navigateToDetail(articleItem)
             }
             recyclerView.adapter = customAdapter
